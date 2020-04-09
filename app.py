@@ -26,11 +26,17 @@ def main():
 
 @app.route('/new', methods=['POST'])
 def new_element():
-    pass
+    queue = Queue()
+    item = request.json.get('item')
+    queue.enqueue(item)
+    return jsonify({"msj": "mensaje enviado"})
 
-@app.route('/next')
+@app.route('/next', methods=['GET'])
 def next_element():
-    pass
+    queue = Queue()
+    item = request.json.get('item')
+    queue.dequeue(item)
+    return jsonify({"msj": "mensaje enviado"})
 
 @app.route('/all')
 def all_element():

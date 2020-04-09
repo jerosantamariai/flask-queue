@@ -8,19 +8,47 @@ from twilio.rest import Client
 class Queue:
 
     def __init__(self):
-        self.account_sid = 'ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
-        self.auth_token = 'your_auth_token'
-        self.client = Client(account_sid, auth_token)
+        self.account_sid = 'ACfe217c9fa9007d8ff9e15ac384697987'
+        self.auth_token = '45d52cd0d99d38bf2467efeccfcaf0f0'
+        self.client = Client(self.account_sid, self.auth_token)
         self._queue = []
         # depending on the _mode, the queue has to behave like a FIFO or LIFO
         self._mode = 'FIFO'
 
     def enqueue(self, item):
-        pass
+        self._queue.append(item)
+        message = self.client.messages.create(
+            body="Entraste en la fila! Hay " + str(len(self._queue)) + " persona(s) antes que tu",
+            to="+56994341489",
+            from_="+13392040838"
+        )
+        message.sid
+        print(message.sid)
+        print(self._queue)
+
     def dequeue(self):
-        pass
+        if self._mode == "FIFO":
+            self._queue.pop(0)
+            message = self.client.messages.create(
+                body="Es tu turno!",
+                to="+56994341489",
+                from_="+13392040838"
+            )
+            message.sid
+            print(message.sid)
+            print(self._queue)
+        else:
+            self._queue.pop(len(_queue)-1)
+            message = self.client.messages.create(
+                body="Es tu turno!",
+                to="+56994341489",
+                from_="+13392040838"
+            )
+            message.sid
+            print(message.sid)
+            print(self._queue)
     def get_queue(self):
-        pass
+        pass #devuelve el _queue
     def size(self):
         return len(self._queue)
 
