@@ -19,6 +19,8 @@ Migrate(app, db)
 manager = Manager(app)
 manager.add_command("db", MigrateCommand)
 
+_queue = Queue()
+
 @app.route('/')
 def main():
     return render_template('index.html')
@@ -26,21 +28,32 @@ def main():
 
 @app.route('/new', methods=['POST'])
 def new_element():
-    queue = Queue()
-    item = request.json.get('item')
-    queue.enqueue(item)
-    return jsonify({"msj": "mensaje enviado"})
+    
+    name = request.json.get('name', None)
+    phone = request.json.get('phone', None)
+
+    if not name or name == '':
+        return jsonify({"msg": "Debes ingresar tu nombre"}), 400
+    if not phone or phone == '':
+        return jsonify({"msg": "Debes ingresar tu telefono"}), 400
+
+    item = {
+        "name": name,
+        "phone": phone
+    }
+    
+    result = _queue.enqueue(item)
+    return jsonify({"msj": "Hola! Entraste en la lista!"}), 200
 
 @app.route('/next', methods=['GET'])
 def next_element():
-    queue = Queue()
-    item = request.json.get('item')
-    queue.dequeue(item)
-    return jsonify({"msj": "mensaje enviado"})
+    result = _queue.dequeue()
+    return jsonify({"msj": "Cliente ha salido de la lista"}), 200
 
 @app.route('/all')
 def all_element():
-    pass
+    users = _queue.get_queue()
+    return jsonify(users), 200
 
 if __name__ == '__main__':
     manager.run()
